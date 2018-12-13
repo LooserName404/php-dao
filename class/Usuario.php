@@ -57,8 +57,50 @@
                 $this->setDataUsuario(new DateTime($row['dtcadastro']));
 
             }
-
             
+        }
+
+        public static function getList(){
+
+            $sql = new Sql();
+
+            return $sql->select("SELECT * FROM Usuario ORDER BY login;");
+
+        }
+
+        public static function search($login){
+
+            $sql = new Sql();
+
+            return $sql->select("SELECT * FROM Usuario WHERE login LIKE :SEARCH ORDER BY login", array(
+                ':SEARCH'=>"%".$login."%"
+            ));
+
+        }
+
+        public function login($login,$senha){
+            
+            $sql = new Sql();
+
+            $results = $sql->select("SELECT * FROM Usuario WHERE login = :LOGIN AND senha = :SENHA", array(
+                ":LOGIN"=>$login,
+                ":SENHA"=>$senha
+            ));
+
+            if(count($results) > 0){
+
+                $row = $results[0];
+
+                $this->setIdUsuario($row['id']);
+                $this->setLoginUsuario($row['login']);
+                $this->setSenhaUsuario($row['senha']);
+                $this->setDataUsuario(new DateTime($row['dtcadastro']));
+
+            } else {
+                throw new Exception("Login e/ou senha incorreto(s).", 1);
+                
+            }
+
         }
         
         public function __toString(){
